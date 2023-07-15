@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李亞珊的第二周作業</title>
+</head>
+<body>
+    <script>
+        console.log('=== Task1 ===');
+        function findAndPrint(messages){
+            /*
+                超過17歲的敘述有以下4種：
+                1. I'm 18 years old.
+                2. I'm a college student. (高中畢業為17~18歲)
+                3. I am of legal age in Taiwan.
+                4. I will vote for Donald Trump next week (美國可投票年齡為18歲) 
+                所以只要有說出任一句上列的敘述，就判定為超過17歲
+            */
+           let judge=[
+            'I\'m 18 years old.',
+            'I\'m a college student.',
+            'I am of legal age in Taiwan.',
+            'I will vote for Donald Trump next week'
+            ];
+           Object.keys(messages).forEach((key) =>{
+                for (let i = 0; i < judge.length; i++) {
+                    if(messages[key].includes(judge[i])){
+                        console.log(key)
+                    }
+                }
+            }
+           )
+        };
+        findAndPrint({
+        "Bob":"My name is Bob. I'm 18 years old.",
+        "Mary":"Hello, glad to meet you.",
+        "Copper":"I'm a college student. Nice to meet you.",
+        "Leslie":"I am of legal age in Taiwan.",
+        "Vivian":"I will vote for Donald Trump next week",
+        "Jenny":"Good morning."
+        });
+        console.log('=== Task2 ===');
+        function calculateSumOfBonus(data){
+            /*
+                獎金的計算規則：
+                1. 基本的獎金為薪資(salary)的0.02倍
+                2. 員工表現(performance)：
+                若表現為above average，則獎金+1000TWD；
+                若表現為average，則獎金+500TWD；
+                若表現為below average，則獎金-500TWD；
+                3. 職位(role)：
+                若職位為Engineer，則獎金為前兩項的總合再乘以3
+                若職位為CEO，則獎金為前兩項的總合再乘以2
+                若職位為Sales，則獎金為前兩項的總合再乘以2
+            */
+            let bonusSum=0
+            let employees=data['employees']
+            for (let i = 0; i < employees.length; i++) {
+                let bonus=0;
+                let salary=employees[i]['salary'];
+                let performance=employees[i]['performance'];
+                let role=employees[i]['role'];
+                // 處理薪水格式
+                if(typeof salary=="string"){
+                    if(salary.includes('USD')){
+                        salary=Number(salary.slice(0,-3))*30
+                    }else if(salary.includes(',')){
+                        salary=Number(salary.replace(',',''))
+                    }
+                };
+                // 薪水獎金
+                bonus+=salary*0.02;
+                // 表現獎金
+                if(performance=='above average'){
+                    bonus+=1000
+                }else if(performance=='average'){
+                    bonus+=500
+                }else{
+                    bonus-=500
+                };
+                // 職位獎金
+                if(role=='Engineer'){
+                    bonus*=3
+                }else{
+                    bonus*=2
+                };
+                bonusSum+=bonus
+            };
+            console.log(bonusSum)
+        };
+        calculateSumOfBonus({
+        "employees":[
+        {
+        "name":"John",
+        "salary":"1000USD",
+        "performance":"above average",
+        "role":"Engineer"
+        },
+        {
+        "name":"Bob",
+        "salary":60000,
+        "performance":"average",
+        "role":"CEO"
+        },
+        {
+        "name":"Jenny",
+        "salary":"50,000",
+        "performance":"below average",
+        "role":"Sales"
+        }
+        ]
+        });
+        console.log('=== Task3 ===');
+        function func(...data){
+            let specialName='None'
+            let midNameCount=new Proxy({},{
+                get: (target, name) => name in target ? target[name]:0
+            })
+            for(let i=0;i<data.length;i++){
+                midNameCount[data[i][1]]+=1
+            }
+            Object.keys(midNameCount).forEach((key) =>{
+                    if(midNameCount[key]==1){
+                    specialName=key
+                    }
+            })
+            if(specialName=='None'){
+                console.log('沒有')
+            }else{
+                for(let i=0;i<data.length;i++){
+                    if(data[i][1]==specialName){
+                        console.log(data[i])
+                    }
+                }
+            }
+        }
+        func("彭⼤牆", "王明雅", "吳明"); // print 彭⼤牆
+        func("郭靜雅", "王立強", "林靜宜", "郭立恆", "林花花"); // print 林花花
+        func("郭宣雅", "林靜宜", "郭宣恆", "林靜花"); // print 沒有
+        console.log('=== Task4 ===')
+        function getNumber(index){
+            let numberArr=[]
+            for(let i=0;i<index+1;i++){
+                if(i==0){
+                    numberArr.push(0)
+                }else if(i%2==0){
+                    numberArr.push(numberArr[i-1]-1)
+                }else{
+                    numberArr.push(numberArr[i-1]+4)
+                }
+            }
+            console.log(numberArr[index])
+        }
+        getNumber(1); // print 4
+        getNumber(5); // print 10
+        getNumber(10); // print 15
+        console.log('=== Task5 ===')
+        function findIndexOfCar(seats, status, number){
+            let candidate=[]
+            for(let i=0;i<status.length;i++){
+                if(status[i]==1){
+                    if(seats[i]>=number){
+                        candidate.push([i,seats[i]])
+                    }
+                }
+            }
+            candidate.sort(function(a,b){
+                return Math.abs(a[1]-number)-Math.abs(b[1]-number)
+            })
+            if(candidate.length==0){
+                console.log(-1)
+            }else{
+                console.log(candidate[0][0])
+            }
+        }
+        findIndexOfCar([3, 1, 5, 4, 2], [0, 1, 0, 1, 1], 2); // print 4
+        findIndexOfCar([1, 0, 5, 1, 3], [0, 1, 0, 1, 1], 4); // print -1
+        findIndexOfCar([4, 6, 5, 8], [0, 1, 1, 1], 4); // print 2
+
+    </script>
+</body>
