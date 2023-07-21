@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="mywebsite.css">
+        <title>李亞珊的第三周作業</title>
+    </head>
+    <body>
+        <!-- 功能選單 -->
+        <div class="title-frame">
+            <div class="title-left">My Website</div>
+            <div class="desktop-menu">
+                <div class="item">Item 1</div>
+                <div class="item">Item 2</div>
+                <div class="item">Item 3</div>
+                <div class="item">Item 4</div>
+            </div>
+            <!-- 功能選單 漢堡圖示 -->
+            <div class="mobile-menu">
+                <img class="hamburger" src="hamburger.png">
+            </div>
+        </div>
+        <!-- 歡迎方框 -->
+        <div class="welcome">Welcome to MyHome</div>
+        <!-- 主內容 -->
+        <div class="web-content">
+            <div class="promotion-frame">
+                <!-- 主內容上⽅3個⽅框 -->
+                <div class="promotion-box"></div>
+                <div class="promotion-box"></div>
+                <div class="promotion-box"></div>
+                <!-- 上方3個方框在螢幕尺寸為600~1200時 -->
+                <div class="promotion-box-laptop"></div>
+                <div class="promotion-box-laptop"></div>
+                <div class="promotion-box-laptop-third"></div>
+            </div>
+        </div>
+        <!-- 主內容下⽅的方框 圖片與標題 -->
+        <div class="web-content">
+            <div class="gallery">
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+                <div id="gallery-box">
+                    <div class="photo-box"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let attractionsArray = []
+            const attractionUrl = 'https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment.json'
+
+            fetch(attractionUrl).then(function(response){
+                return response.json()
+            }).then(function(data){
+                let attractionsRawData = data['result']['results']
+                // 取得需要的資訊
+                for(let i=0; i<attractionsRawData.length; i++){
+                let tempArray = []
+                // 取得景點名稱
+                tempArray.push(attractionsRawData[i]['stitle'])
+                // 取得圖片連結
+                let urlArray = attractionsRawData[i]['file'].split('https')
+                for(let j=0; j<urlArray.length; j++){
+                    if(urlArray[j].includes('.jpg')||urlArray[j].includes('.JPG')){
+                        tempArray.push('https'+urlArray[j])
+                        break
+                    }
+                }
+                attractionsArray.push(tempArray)
+                }
+                // 讓上方三個方框顯示景點資料
+                let promotionElem = document.querySelectorAll('.promotion-box')
+                for(let i=0; i<3; i++){
+                    let promotionPhoto = document.createElement('img')
+                    promotionPhoto.setAttribute('src',attractionsArray[i][1])
+                    promotionPhoto.className = 'promotion-photo'
+                    let promotionTitle = document.createElement('div')
+                    promotionTitle.textContent = attractionsArray[i][0]
+                    promotionElem[i].appendChild(promotionPhoto)
+                    promotionElem[i].appendChild(promotionTitle)
+                }
+                // 處理筆電螢幕
+                let promotionLaptopElem = document.querySelectorAll('.promotion-box-laptop')
+                let promotionLaptopElemThird = document.querySelector('.promotion-box-laptop-third')
+                for(let i=0; i<3; i++){
+                    let promotionPhoto = document.createElement('img')
+                    promotionPhoto.setAttribute('src',attractionsArray[i][1])
+                    promotionPhoto.className = 'promotion-photo'
+                    let promotionTitle = document.createElement('div')
+                    promotionTitle.textContent = attractionsArray[i][0]
+                    if(i<2){
+                        promotionLaptopElem[i].appendChild(promotionPhoto)
+                        promotionLaptopElem[i].appendChild(promotionTitle)
+                    }else{
+                        promotionLaptopElemThird.appendChild(promotionPhoto)
+                        promotionLaptopElemThird.appendChild(promotionTitle)
+                    }
+                }
+                // 讓下方12個方框顯示景點資料
+                let galleryPhotoElm = document.querySelectorAll('.photo-box')
+                let galleryTitleElm = document.querySelectorAll('#gallery-box')
+                for(let i=0; i<galleryPhotoElm.length; i++){
+                    let galleryPhoto = document.createElement('img')
+                    galleryPhoto.setAttribute('src',attractionsArray[i+3][1])
+                    galleryPhoto.className = 'photo-box-img'
+                    galleryPhotoElm[i].appendChild(galleryPhoto)
+                    let photoTitle = document.createElement('div')
+                    photoTitle.className = 'photo-title'
+                    photoTitle.textContent = attractionsArray[i+3][0]
+                    galleryPhotoElm[i].appendChild(galleryPhoto)
+                    galleryTitleElm[i].appendChild(photoTitle)
+                }
+            })
+        </script>
+    </body>
+</html>

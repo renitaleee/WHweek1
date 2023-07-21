@@ -1,0 +1,161 @@
+body{
+    font-size: 20px;
+    margin: 0%;
+}
+/* 標題 */
+.title-frame{
+    display:flex;
+    padding: 10px;
+    align-items: center;
+}
+.title-left{
+    flex: auto;
+    display: flex;
+    align-items: center;
+}
+/* 功能選單 */
+.desktop-menu{
+    flex: none;
+    width: 60%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.mobile-menu{
+    display: none;
+}
+.item{
+    margin-left: 20px;
+}
+/* 歡迎方框 */
+.welcome{
+    height: 250px;
+    background-color: #ddeef8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+/* 主內容 */
+.web-content{
+    display: flex;
+    justify-content: center;
+}
+.promotion-frame{
+    width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+}
+/* 主內容上方的方框 */
+.promotion-box{
+    display: flex;
+    align-items: center;
+    background-color: #ccdde7;
+    height: 50px;
+    margin-bottom: 20px;
+}
+.promotion-box-laptop{
+    display: none;
+}
+.promotion-box-laptop-third{
+    display: none;
+}
+.promotion-photo{
+    width: 80px;
+    height: 50px;
+    overflow: hidden;
+    margin-right: 10px;
+}
+/* 主內容下方的方框 */
+.gallery{
+    width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 20px;
+}
+.photo-box{
+    overflow: hidden;
+    height: 200px;
+}
+.photo-box-img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.photo-title{
+    height: 50px;
+    background-color: #ccdde7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+@media(max-width:1200px){
+    .promotion-frame{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        grid-gap: 0px;
+        width: 90%;
+    }
+    .promotion-box{
+        display: none;
+    }
+    .promotion-box-laptop{
+        width: calc(50% - 10px);
+        display: flex;
+        align-items: center;
+        background-color: #ccdde7;
+        height: 50px;
+        margin-bottom: 20px;
+    }
+    .promotion-box-laptop-third{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        background-color: #ccdde7;
+        height: 50px;
+        margin-bottom: 20px;
+    }
+    .gallery{
+        width: 90%;
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media(max-width:600px){
+    /* 功能選單 */
+    .desktop-menu{
+        display: none;
+    }
+    .mobile-menu{
+        display: block;
+        height: 30px;
+    }
+    .hamburger{
+        height: 25px;
+    }
+    /* 主內容上⽅3個⽅框 */
+    .promotion-frame{
+        width: 90%;
+        display: block;
+    }
+    .promotion-box{
+        display: flex;
+    }
+    .promotion-box-laptop{
+        display: none;
+    }
+    .promotion-box-laptop-third{
+        display: none;
+    }
+    /* 主內容下⽅的方框 */
+    .gallery{
+        grid-template-columns: repeat(1, 1fr);
+    }
+    
+}
