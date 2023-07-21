@@ -86,7 +86,7 @@ body{
     object-fit: cover;
 }
 .photo-title{
-    height: 50px;
+    height: 80px;
     background-color: #ccdde7;
     display: flex;
     justify-content: center;
