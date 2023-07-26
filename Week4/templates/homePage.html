@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='template.css') }}">
+        <title>登入系統</title>
+    </head>
+    <body>
+        <div class="title">歡迎光臨，請輸入帳號密碼</div>
+        <div class="subtitle">登入系統</div>
+        <form method="post" action="/signin">
+            <div class="content">
+                <label>帳號 <input type="text" name="account"></label>
+            </div>
+            <div class="content">
+                <label>密碼 <input type="password" name="password"></label>
+            </div>
+            <div class="content">
+                <label>同意條款<input id="checkbox" type="checkbox" name="agreement"></label>
+            </div>
+            <div class="content">
+                <input type="submit" name="btn" id="btn" value="登入">
+            </div>
+        </form>
+        <hr class="line">
+        <div class="subtitle">計算正整數的平方</div>
+        <form action="/square">
+            <div class="content">
+                <label>正整數 <input id="number" name="number" type="text"></label>
+            </div>
+            <div class="content">
+                <input type="submit" name="squareBtn" id="squareBtn" value="計算">
+            </div>
+        </form>
+        <script>
+            window.onload=function(){
+                let submitBtn = document.getElementById('btn')
+                submitBtn.onclick = function(){
+                    if(!document.getElementById('checkbox').checked){
+                        alert('Please check the checkbox first')
+                        return false
+                    }
+                }
+                function isNumber(num){
+                    let regex = new RegExp(/^\d+$/)
+                    let check = regex.test(num)
+                    return check
+                }
+                let submitSquareBtn = document.getElementById('squareBtn')
+                submitSquareBtn.onclick = function(){
+                    val = document.getElementById('number').value
+                    if(!isNumber(val)){
+                        alert('Please enter a positive number')
+                        return false
+                    }else if(val<0){
+                        alert('Please enter a positive number')
+                        return false
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
