@@ -25,12 +25,12 @@
         </form>
         <hr class="line">
         <div class="subtitle">計算正整數的平方</div>
-        <form action="/square">
+        <form onsubmit="return setAction(this)" method="post">
             <div class="content">
                 <label>正整數 <input id="number" name="number" type="text"></label>
             </div>
             <div class="content">
-                <input type="submit" name="squareBtn" id="squareBtn" value="計算">
+                <input type="submit" value="計算">
             </div>
         </form>
         <script>
@@ -42,21 +42,22 @@
                         return false
                     }
                 }
+            }
+            function setAction(form){
                 function isNumber(num){
                     let regex = new RegExp(/^\d+$/)
                     let check = regex.test(num)
                     return check
                 }
-                let submitSquareBtn = document.getElementById('squareBtn')
-                submitSquareBtn.onclick = function(){
-                    val = document.getElementById('number').value
-                    if(!isNumber(val)){
+                let val = document.getElementById('number').value
+                if(!isNumber(val)){
+                    alert('Please enter a positive number')
+                        return false
+                }else if(val<0){
                         alert('Please enter a positive number')
                         return false
-                    }else if(val<0){
-                        alert('Please enter a positive number')
-                        return false
-                    }
+                }else{
+                    form.action = 'square/'+val
                 }
             }
         </script>
