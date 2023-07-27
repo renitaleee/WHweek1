@@ -42,12 +42,7 @@ def error():
     return render_template('error.html', message = error_message)
 
 # 將數字平方
-@app.route('/square')
-def get_square():
-    num = request.args.get('number','')
-    return redirect('/square/'+num)
-
-@app.route('/square/<num>')
+@app.route('/square/<num>', methods = ['POST'])
 def cal(num):
     square = int(num) ** 2
     return render_template('square.html', squareNum = square)
