@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../static/template.css">
+        <title>會員介面</title>
+    </head>
+    <body>
+        <div class="title">歡迎光臨，這是會員頁</div>
+        <div class="content">{{name}}，歡迎登入系統</div>
+        <a class="content" href="/signout">登出系統</a>
+        <hr class="line">
+        <div class="subtitle">快來留言吧</div>
+        <form method="post" action="/createMessage">
+            <div class="content">
+                <label>內容 <input type="text" name="content" required></label>
+            </div>
+            <div class="content">
+                <input type="submit" value="送出">
+            </div>
+            <hr class="line">
+        </form>
+        <div id="messageBoard"></div>
+        <script>
+            fetch("/getmessage").then(function(response){
+                return response.json();
+            }).then(function(data){
+                let boardElem = document.querySelector("#messageBoard")
+                for(let i=0; i<data.length; i++){
+                    let messageDiv=document.createElement('div');
+                    messageDiv.id='message';
+                    messageDiv.className='content';
+                    let boardElem=document.querySelector('#messageBoard')
+                    boardElem.appendChild(messageDiv)
+                    let messageElem=document.querySelectorAll('#message');
+                    let nameSpan=document.createElement('span');
+                    nameSpan.className='messageName';
+                    nameSpan.textContent=data[i][0]+"：";
+                    let saidSpan=document.createElement('span');
+                    saidSpan.textContent=data[i][1];
+                    messageElem[i].appendChild(nameSpan);
+                    messageElem[i].appendChild(saidSpan);
+                }
+            })
+        </script>
+    </body>
+</html>

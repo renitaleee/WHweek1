@@ -1,0 +1,39 @@
+body{
+    font-size: 20px;
+    margin: 0%;
+}
+
+.title{
+    background-color: #223343;
+    height: 60px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.subtitle{
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.line{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.messageName{
+    font-weight: bold;
+}
