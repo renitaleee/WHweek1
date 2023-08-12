@@ -10,10 +10,10 @@ app.secret_key = '2000915'
 def connect_to_db():
     load_dotenv()
     conn = mysql.connector.connect(
-    host = 'localhost',
-    database = 'website',
-    user = os.getenv('user'),
-    password = os.getenv('password')
+        host = 'localhost',
+        database = 'website',
+        user = os.getenv('user'),
+        password = os.getenv('password')
     )
     return conn
 
@@ -30,16 +30,17 @@ def signup():
     password = request.form['password']
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT username FROM member;')
-    used_username = cursor.fetchall()
+    check_data = (username,)
+    cursor.execute('SELECT username FROM member WHERE username=%s;',check_data)
+    used_username = cursor.fetchone()
     cursor.close()
     conn.close()
-    for i in range(len(used_username)):
-        if username == used_username[i][0]:
-            return redirect('/error?message=帳號已被註冊')
+    if used_username:
+        return redirect('/error?message=帳號已被註冊')
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute(f'INSERT INTO member (name, username, password) Values(\'{name}\', \'{username}\', \'{password}\')')
+    sign_up_data = (name, username, password)
+    cursor.execute('INSERT INTO member (name, username, password) Values(%s, %s, %s);', sign_up_data)
     conn.commit()
     cursor.close()
     conn.close()
@@ -51,20 +52,21 @@ def signup():
 def signin():
     username = request.form['username']
     password = request.form['password']
+    signin_data = (username, password)
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, username, password FROM member')
-    member_info = cursor.fetchall()
+    cursor.execute('SELECT id, name, username, password FROM member WHERE username=%s AND password=%s;', signin_data)
+    member_info = cursor.fetchone()
     cursor.close()
     conn.close()
-    for i in range(len(member_info)):
-        if username == member_info[i][2] and password == member_info[i][3]:
-            session['login'] = True
-            session['id'] = member_info[i][0]
-            session['username'] = member_info[i][2]
-            session['name'] = member_info[i][1]
-            return redirect('/member')
-    return redirect('/error?message=帳號或密碼輸入錯誤')
+    if member_info:
+        session['login'] = True
+        session['id'] = member_info[0]
+        session['name'] = member_info[1]
+        session['username'] = member_info[2]
+        return redirect('/member')
+    else:
+        return redirect('/error?message=帳號或密碼輸入錯誤')
     
 
 # 會員畫面
@@ -81,23 +83,39 @@ def member():
 def get_message():
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT member.name, message.content FROM message INNER JOIN member ON message.member_id=member.id ORDER BY message.time DESC;')
+    cursor.execute('SELECT message.id, member.username, member.name, message.content FROM message INNER JOIN member ON message.member_id=member.id ORDER BY message.time DESC;')
     messages = cursor.fetchall()
     cursor.close()
     conn.close()
+    messages.append(session['username'])
     return json.dumps(messages)
 
 # 新增留言
 @app.route('/createMessage', methods = ['POST'])
 def create_message():
     content = request.form['content']
+    message_data = (session['id'], content)
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute(f'INSERT INTO message(member_id, content) VALUES(\'{session["id"]}\', \'{content}\');')
+    cursor.execute('INSERT INTO message(member_id, content) VALUES(%s, %s);', message_data)
     conn.commit()
     cursor.close()
     conn.close()
     return redirect('/member')
+
+# 刪除留言
+@app.route('/deleteMessage', methods = ['POST'])
+def del_message():
+    message_id = request.form['messageID']
+    message_id = (message_id,)
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM message WHERE id=%s', message_id)
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return redirect('/member')
+    
 
 # 登出系統並跳回首頁
 @app.route('/signout')
