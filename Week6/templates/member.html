@@ -27,22 +27,53 @@
                 return response.json();
             }).then(function(data){
                 let boardElem = document.querySelector("#messageBoard")
-                for(let i=0; i<data.length; i++){
+                let btnNum=0;
+                for(let i=0; i<data.length-1; i++){
                     let messageDiv=document.createElement('div');
                     messageDiv.id='message';
                     messageDiv.className='content';
-                    let boardElem=document.querySelector('#messageBoard')
-                    boardElem.appendChild(messageDiv)
+                    let boardElem=document.querySelector('#messageBoard');
+                    boardElem.appendChild(messageDiv);
                     let messageElem=document.querySelectorAll('#message');
                     let nameSpan=document.createElement('span');
                     nameSpan.className='messageName';
-                    nameSpan.textContent=data[i][0]+"：";
+                    nameSpan.textContent=data[i][2]+"：";
                     let saidSpan=document.createElement('span');
-                    saidSpan.textContent=data[i][1];
+                    saidSpan.textContent=data[i][3];
                     messageElem[i].appendChild(nameSpan);
                     messageElem[i].appendChild(saidSpan);
+
+                    if(data[i][1]==data.at(-1)){
+                        let delForm=document.createElement('form');
+                        delForm.setAttribute('action','/deleteMessage');
+                        delForm.setAttribute('method','POST');
+                        delForm.setAttribute('onsubmit','return confirmDel()');
+                        delForm.id='delForm';
+                        messageElem[i].appendChild(delForm)
+                        delFormElem=document.querySelectorAll('#delForm');
+                        let delInput=document.createElement('input');
+                        delInput.setAttribute('type', 'hidden');
+                        delInput.setAttribute('name', 'messageID');
+                        delInput.setAttribute('value', data[i][0]);
+                        delInput.id='delInput';
+                        let delButton=document.createElement('input');
+                        delButton.type='submit';
+                        delButton.id='btn';
+                        delButton.setAttribute('value','X');
+                        delFormElem[btnNum].appendChild(delInput);
+                        delFormElem[btnNum].appendChild(delButton);
+                        btnNum+=1
+                    }
                 }
             })
+            function confirmDel(){
+                text='確定要刪除留言嗎？'
+                if(confirm(text)==true) {
+                    return true;
+                }else{
+                    return false
+                }
+            }
         </script>
     </body>
 </html>
