@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../static/template.css">
+        <title>會員介面</title>
+    </head>
+    <body>
+        <div class="title">歡迎光臨，這是會員頁</div>
+        <div class="content" id="welcome">{{name}}，歡迎登入系統</div>
+        <a class="content" href="/signout">登出系統</a>
+        <hr class="line">
+        <div class="subtitle">快來留言吧</div>
+        <form method="post" action="/createMessage">
+            <div class="content">
+                <label>內容 <input type="text" name="content" required></label>
+            </div>
+            <div class="content">
+                <input type="submit" value="送出">
+            </div>
+        </form>
+        <hr class="line">
+        <div id="messageBoard"></div>
+        <hr class="line">
+        <div class="subtitle">查詢會員姓名</div>
+        <form>
+            <div class="content">
+                <input type="text" name="username" id="searchUsername" required>
+                <input type="button" id="searchBtn" class="btn" value="查詢" onclick="searchName()">
+            </div>
+        </form>
+        <div class="content">
+            <div class="hideResult" id="result">name</div>
+        </div>
+        <div class="subtitle">更新我的姓名</div>
+        <form>
+            <div class="content">
+                <input type="text" id="newName" required>
+                <input type="button" id="modifyBtn" class="btn" value="更新" onclick="modifyName()">
+            </div>
+        </form>
+        <div class="content">
+            <div class="hideResult" id="modifyState">update name</div>
+        </div>
+        <script>
+            let searchUsernameElem = document.getElementById('searchUsername')
+            let searchBtnElem = document.getElementById('searchBtn')
+            searchUsernameElem.addEventListener('keypress', function(event){
+                if(event.key === 'Enter'){
+                    event.preventDefault();
+                    searchBtnElem.click();
+                }
+            });
+            let newNameElem = document.getElementById('newName')
+            let modifyBtnElem = document.getElementById('modifyBtn')
+            newNameElem.addEventListener('keypress', function(event){
+                if(event.key === 'Enter'){
+                    event.preventDefault();
+                    modifyBtnElem.click();
+                }
+            });
+            fetch("/getmessage").then(function(response){
+                return response.json();
+            }).then(function(data){
+                let boardElem = document.querySelector("#messageBoard")
+                let btnNum=0;
+                for(let i=0; i<data.length-1; i++){
+                    let messageDiv=document.createElement('div');
+                    messageDiv.id='message';
+                    messageDiv.className='content';
+                    let boardElem=document.querySelector('#messageBoard');
+                    boardElem.appendChild(messageDiv);
+                    let messageElem=document.querySelectorAll('#message');
+                    let nameSpan=document.createElement('span');
+                    nameSpan.className='messageName';
+                    nameSpan.textContent=data[i][2]+"：";
+                    let saidSpan=document.createElement('span');
+                    saidSpan.textContent=data[i][3];
+                    messageElem[i].appendChild(nameSpan);
+                    messageElem[i].appendChild(saidSpan);
+                    if(data[i][1]==data.at(-1)){
+                        let delForm=document.createElement('form');
+                        delForm.setAttribute('action','/deleteMessage');
+                        delForm.setAttribute('method','POST');
+                        delForm.setAttribute('onsubmit','return confirmDel()');
+                        delForm.id='delForm';
+                        messageElem[i].appendChild(delForm)
+                        delFormElem=document.querySelectorAll('#delForm');
+                        let delInput=document.createElement('input');
+                        delInput.setAttribute('type', 'hidden');
+                        delInput.setAttribute('name', 'messageID');
+                        delInput.setAttribute('value', data[i][0]);
+                        delInput.id='delInput';
+                        let delButton=document.createElement('input');
+                        delButton.type='submit';
+                        delButton.id='btn';
+                        delButton.className='btn';
+                        delButton.setAttribute('value','X');
+                        delFormElem[btnNum].appendChild(delInput);
+                        delFormElem[btnNum].appendChild(delButton);
+                        btnNum+=1
+                    }
+                }
+            })
+            function confirmDel(){
+                let text='確定要刪除留言嗎？'
+                if(confirm(text)==true) {
+                    return true;
+                }else{
+                    return false
+                }
+            }
+            function searchName(){
+                let username = searchUsernameElem.value
+                fetch(`/api/member?username=${encodeURIComponent(username)}`, {
+                    method: 'GET'
+                }).then(function(response){
+                    return response.json();
+                }).then(function(data){
+                    let resultElem = document.getElementById('result');
+                    resultElem.classList.remove('hideResult');
+                    if(data['data'] == null){
+                        resultElem.textContent = '無此會員';
+                    }else{
+                        resultElem.textContent = data['data']['name']+`（${data['data']['username']}）`;
+                    }
+                })
+            }
+            function modifyName(){
+                let newName = {"name":newNameElem.value};
+                fetch('/api/member',{
+                    method: 'PATCH',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify(newName)
+                }).then(function(response){
+                    return response.json();
+                }).then(function(data){
+                    let modifyStateElem = document.getElementById('modifyState');
+                    modifyStateElem.classList.remove('hideResult');
+                    if(data.ok){
+                        modifyStateElem.textContent = '更新成功';
+                        let welcomeElem = document.getElementById('welcome');
+                        welcomeElem.textContent = `${newNameElem.value}，歡迎登入系統`
+                    }else{
+                        modifyStateElem.textContent = '更新失敗'
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>
